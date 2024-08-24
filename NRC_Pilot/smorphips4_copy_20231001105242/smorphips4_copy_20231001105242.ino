@@ -1,8 +1,6 @@
 #include <esp_now.h>
 #include <WiFi.h>
 #include <smorphi.h>
-//0xec,0x64,0xc9,0x98,0x68,0x1c
-
 
 // Structure to receive joystick, button, solenoid, and master button data
 typedef struct struct_message {
@@ -29,12 +27,13 @@ struct_response robotData;
 // Initialize the Smorphi robot
 Smorphi my_robot;
 
-// Movement parameters
-int WASD_speed = 180;
-int Rot_speed = 180;
-int Dia_speed = 100;
+// Maximum movement speeds
+int max_WASD_speed = 180;
+int max_Rot_speed = 180;
+int max_Dia_speed = 100;
 
 uint8_t controllerAddress[] = {0xec,0x64,0xc9,0x98,0x68,0x1c};
+
 // Function to update robotData with current solenoid and motor status
 void updateRobotData() {
   // Example logic to update solenoidStatus and motorSpeeds
@@ -42,11 +41,6 @@ void updateRobotData() {
     robotData.solenoidStatus[i] = my_robot.sm_feedback(i+1);
   }
 
-  // Update motor speeds (example values, replace with actual motor speed values)
-  // robotData.motorSpeeds[0] = my_robot.GetMotorSpeed(1);
-  // robotData.motorSpeeds[1] = my_robot.GetMotorSpeed(2);
-  // robotData.motorSpeeds[2] = my_robot.GetMotorSpeed(3);
-  // robotData.motorSpeeds[3] = my_robot.GetMotorSpeed(4);
   for (int i = 0; i < 16; i++) {
     robotData.motorSpeeds[i] = 20;
   }
@@ -60,45 +54,51 @@ void updateRobotData() {
 void onDataRecv(const esp_now_recv_info * info, const uint8_t *controllerData, int len) { 
   memcpy(&incomingData, controllerData, sizeof(incomingData));
 
+  // Calculate speed based on joystick input
+  int speedLeftX = map(abs(incomingData.leftX), 0, 127, 0, max_WASD_speed);
+  int speedLeftY = map(abs(incomingData.leftY), 0, 127, 0, max_WASD_speed);
+  int speedRightX = map(abs(incomingData.rightX), 0, 127, 0, max_Rot_speed);
+  int speedDiagonal = map(max(abs(incomingData.leftX), abs(incomingData.leftY)), 0, 127, 0, max_Dia_speed);
+
   // Process joystick inputs for movement
   if(incomingData.rightX > 15) {
-    my_robot.CenterPivotLeft(Rot_speed);
+    my_robot.CenterPivotLeft(speedRightX);
     Serial.println("Left Turn");
   }
   else if(incomingData.rightX < -15) {
-    my_robot.CenterPivotRight(Rot_speed);
+    my_robot.CenterPivotRight(speedRightX);
     Serial.println("Right Turn");
   }
   else if(incomingData.leftY > 15 && abs(incomingData.leftX) < 35) {
-    my_robot.MoveBackward(WASD_speed);
+    my_robot.MoveBackward(speedLeftY);
     Serial.println("Backward");
   }
   else if(incomingData.leftY < -15 && abs(incomingData.leftX) < 35) {
-    my_robot.MoveForward(WASD_speed);
+    my_robot.MoveForward(speedLeftY);
     Serial.println("Forward");
   }
   else if(incomingData.leftX < -15 && abs(incomingData.leftY) < 15) {
-    my_robot.MoveRight(WASD_speed);
+    my_robot.MoveRight(speedLeftX);
     Serial.println("Right");
   }
   else if(incomingData.leftX > 15 && abs(incomingData.leftY) < 15) {
-    my_robot.MoveLeft(WASD_speed);
+    my_robot.MoveLeft(speedLeftX);
     Serial.println("Left");
   }
-   else if(incomingData.leftX > 35 && incomingData.leftY > 35) {
-    my_robot.MoveDiagDownLeft(Dia_speed);
+  else if(incomingData.leftX > 35 && incomingData.leftY > 35) {
+    my_robot.MoveDiagDownLeft(speedDiagonal);
     Serial.println("DownLeft");
   }
-   else if(incomingData.leftX > 35 && incomingData.leftY < -35) {
-    my_robot.MoveDiagUpLeft(Dia_speed);
+  else if(incomingData.leftX > 35 && incomingData.leftY < -35) {
+    my_robot.MoveDiagUpLeft(speedDiagonal);
     Serial.println("UpLeft");
   }
   else if(incomingData.leftX < -35 && incomingData.leftY > 35) {
-    my_robot.MoveDiagDownRight(Dia_speed);
+    my_robot.MoveDiagDownRight(speedDiagonal);
     Serial.println("DownRight");
   }
   else if(incomingData.leftX < -35 && incomingData.leftY < -35) {
-    my_robot.MoveDiagUpRight(Dia_speed);
+    my_robot.MoveDiagUpRight(speedDiagonal);
     Serial.println("UpRight");
   }
   else {
@@ -255,5 +255,5 @@ void setup() {
 }
 
 void loop() {
-  // The loop is empty because we process data in the onDataRecv callback
+  // The loop is empty because we process data in the onDataRecv
 }
