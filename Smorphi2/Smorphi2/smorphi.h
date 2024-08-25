@@ -85,11 +85,6 @@ public:
   //Center Pivot Locomotion
   void CenterPivotLeft(int Speed);
   void CenterPivotRight(int Speed);
-
-  void HingePivotClockwise(int Speed, int mod);
-  void HingePivotAnticlockwise(int Speed, int mod);
-
-
   //Check the feedback of solenoid
   int sm_feedback(int solenoid_feedback);
   //Unlock certain solenoid
