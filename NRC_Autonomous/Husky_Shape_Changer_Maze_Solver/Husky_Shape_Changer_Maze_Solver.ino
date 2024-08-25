@@ -398,18 +398,20 @@ void clearnroom(){
     }
 
 
+    // implement the rest of the missing y
+    // to all movement, add if detect colour, store colour val
 
 
+    if (missingx = 0, (leftultrasonic|| rightultrasonic) && frontultrasonic) <5mm && colour = 1{ 
+      // hard code this???
+      changeshape('I');
+    }
+
+    
   }
 }
 
-// implement the rest of the missing y
-
-
-
-
-
-
+implement a fuction to detect colour at the start of the room, and call code sequence based on the colour detected(just incase kena reset)
 
 
 */
