@@ -138,3 +138,51 @@ void loop() {
 //  my_robot.sm_reset_M4();
  
 }
+
+// hy psudo code cause he cant c++
+/*
+void walltrace(int front, int right, int back, int left, int huskylenseval){ // i cbb to add the rest of the yeah
+
+double kp speedL speedR speed treshold;
+
+  if (front = 1,right = 1); 
+
+  if (right = 1,back = 1);
+
+  if (back = 1,left = 1);
+
+  if (left = 1,front = 1){
+
+    while (frontultrasonic > 5mm){
+
+      if (left ultrasonic > 5mm){
+        speedL = speed - kp * (left ultrasonic -  treshold);
+        speedR = speed + kp * (left ultrasonic -  treshold);
+      }
+      else  if (left ultrasonic < 5mm){
+        speedL = speed + kp * (left ultrasonic -  treshold);
+        speedR = speed - kp * (left ultrasonic -  treshold);
+      }
+      else{
+        speedL = speed;
+        speedR = speed;
+      }
+
+      run motor at speedL and speedR
+
+      if (left ultrasonic < 5mm && front ultrasonic < 5mm) || (left ultrasonic > 5mm && huskylenseval = 1) || (huskylenseval = 1 && front ultrasonic > 5mm){
+        break;
+      }
+
+    }
+
+  }
+
+
+
+
+}
+
+*/
+
+
