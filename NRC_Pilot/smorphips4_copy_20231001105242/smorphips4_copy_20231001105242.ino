@@ -28,7 +28,7 @@ struct_response robotData;
 Smorphi my_robot;
 
 // Maximum movement speeds
-int max_WASD_speed = 180;
+int max_WASD_speed = 100;
 int max_Rot_speed = 180;
 int max_Dia_speed = 100;
 
@@ -55,51 +55,58 @@ void onDataRecv(const esp_now_recv_info * info, const uint8_t *controllerData, i
   memcpy(&incomingData, controllerData, sizeof(incomingData));
 
   // Calculate speed based on joystick input
-  int speedLeftX = map(abs(incomingData.leftX), 0, 127, 0, max_WASD_speed);
-  int speedLeftY = map(abs(incomingData.leftY), 0, 127, 0, max_WASD_speed);
-  int speedRightX = map(abs(incomingData.rightX), 0, 127, 0, max_Rot_speed);
-  int speedDiagonal = map(max(abs(incomingData.leftX), abs(incomingData.leftY)), 0, 127, 0, max_Dia_speed);
+  int speedLeftX = map(abs(incomingData.leftX-2047), 0, 2048, 0, max_WASD_speed);
+  int speedLeftY = map(abs(incomingData.leftY-2047), 0, 2048, 0, max_WASD_speed);
+  int speedRightX = map(abs(incomingData.rightX-2047), 0, 2048, 0, max_Rot_speed);
+  int speedRightY = map(abs(incomingData.rightY-2047), 0, 2048, 0, max_Rot_speed);
+  int speedDiagonal = map(max(abs(incomingData.leftX-2047), abs(incomingData.leftY-2047)), -2047, 2048, 0, max_Dia_speed);
+  Serial.println("Speeds:");
+  Serial.println(speedLeftX);
+  Serial.println(speedLeftY);
+  Serial.println(speedRightX);
+  Serial.println(speedRightY);
+  Serial.println(speedDiagonal);
 
   // Process joystick inputs for movement
-  if(incomingData.rightX > 15) {
+  if(incomingData.rightX > 2000) {
     my_robot.CenterPivotLeft(speedRightX);
     Serial.println("Left Turn");
   }
-  else if(incomingData.rightX < -15) {
+  else if(incomingData.rightX < 1750) {
     my_robot.CenterPivotRight(speedRightX);
     Serial.println("Right Turn");
   }
-  else if(incomingData.leftY > 15 && abs(incomingData.leftX) < 35) {
-    my_robot.MoveBackward(speedLeftY);
-    Serial.println("Backward");
-  }
-  else if(incomingData.leftY < -15 && abs(incomingData.leftX) < 35) {
-    my_robot.MoveForward(speedLeftY);
-    Serial.println("Forward");
-  }
-  else if(incomingData.leftX < -15 && abs(incomingData.leftY) < 15) {
-    my_robot.MoveRight(speedLeftX);
-    Serial.println("Right");
-  }
-  else if(incomingData.leftX > 15 && abs(incomingData.leftY) < 15) {
-    my_robot.MoveLeft(speedLeftX);
-    Serial.println("Left");
-  }
-  else if(incomingData.leftX > 35 && incomingData.leftY > 35) {
+  else if(incomingData.leftX > 2000 && incomingData.leftY > 2000) {
     my_robot.MoveDiagDownLeft(speedDiagonal);
     Serial.println("DownLeft");
   }
-  else if(incomingData.leftX > 35 && incomingData.leftY < -35) {
+  else if(incomingData.leftX > 2000 && incomingData.leftY < 1750) {
     my_robot.MoveDiagUpLeft(speedDiagonal);
     Serial.println("UpLeft");
   }
-  else if(incomingData.leftX < -35 && incomingData.leftY > 35) {
+  else if(incomingData.leftX < 1750 && incomingData.leftY > 2000) {
     my_robot.MoveDiagDownRight(speedDiagonal);
     Serial.println("DownRight");
   }
-  else if(incomingData.leftX < -35 && incomingData.leftY < -35) {
+  else if(incomingData.leftX < 1750 && incomingData.leftY < 1750) {
     my_robot.MoveDiagUpRight(speedDiagonal);
     Serial.println("UpRight");
+  }
+  else if(incomingData.leftY > 2000) {
+    my_robot.MoveBackward(speedLeftY);
+    Serial.println("Backward");
+  }
+  else if(incomingData.leftY < 1750) {
+    my_robot.MoveForward(speedLeftY);
+    Serial.println("Forward");
+  }
+  else if(incomingData.leftX < 1750) {
+    my_robot.MoveRight(speedLeftX);
+    Serial.println("Right");
+  }
+  else if(incomingData.leftX > 2000) {
+    my_robot.MoveLeft(speedLeftX);
+    Serial.println("Left");
   }
   else {
     my_robot.stopSmorphi();

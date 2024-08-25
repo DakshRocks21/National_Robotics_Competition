@@ -453,7 +453,7 @@ char Smorphi::sm_getShape(){
     sm_solenoid_set(4,1);
     sm_solenoid_set(5,1);
     sm_solenoid_set(6,0);
-    robot_shape = 'i'
+    robot_shape = 'i';
   }
 
   return robot_shape;
@@ -518,7 +518,7 @@ void Smorphi::sm_velocity_handler(float sm_req_linear_speed_x, float sm_req_line
     sm_lv_M4FL  =  ( v_x - v_y - 0.17 * w - ( sm_wheel_x + sm_wheel_y) * w );
     sm_lv_M4FR  =  ( v_x + v_y + ( sm_wheel_x + sm_wheel_y) * w );
     sm_lv_M4RL  =  ( v_x + v_y - ( sm_wheel_x + sm_wheel_y) * w );
-    sm_lv_M4RR  =  ( v_x - v_y - 0.17 * w + ( sm_wheel_x + sm_wheel_y) * w )
+    sm_lv_M4RR  =  ( v_x - v_y - 0.17 * w + ( sm_wheel_x + sm_wheel_y) * w ); 
 
   }
 
