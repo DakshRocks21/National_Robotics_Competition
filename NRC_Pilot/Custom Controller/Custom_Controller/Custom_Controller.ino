@@ -28,6 +28,7 @@ typedef struct struct_message {
   bool buttons[8];
   bool solenoids[6];
   bool master[2];
+  bool individualModules[4];
 } struct_message;
 
 struct_message myData;
@@ -44,7 +45,9 @@ struct_response robotData;
 // ROBOT MAC ADDRESS
 uint8_t broadcastAddress[] = { 0xec, 0x64, 0xc9, 0xa9, 0x08, 0x88 };
 
-void writeLeDs(char solenoids[6], char l1 = 'w', char l2 = 'w', char l3 = 'w', char connected = 0) {
+int selectedModule = -1; // -1 indicates no module is selected
+
+void writeLeDs(char solenoids[6], char l1 = 1, char l2 = 1, char l3 = 1, char connected = 0) {
   updateShiftRegister();
   int j = 0;
 
@@ -95,28 +98,28 @@ void updateShiftRegister() {
 // Function to set the color based on the character code
 void setColor(char color, int redBit, int blueBit, int greenBit) {
   switch (color) {
-    case 'r':
+    case 1:
       bitSet(ledState, redBit);  // Red on
       break;
-    case 'g':
+    case 2:
       bitSet(ledState, greenBit);  // Green on
       break;
-    case 'b':
+    case 3:
       bitSet(ledState, blueBit);  // Blue on
       break;
-    case 'c':
+    case 5:
       bitSet(ledState, greenBit);  // Cyan (Green + Blue)
       bitSet(ledState, blueBit);
       break;
-    case 'y':
+    case 4:
       bitSet(ledState, redBit);  // Yellow (Red + Green)
       bitSet(ledState, greenBit);
       break;
-    case 'p':
+    case 6:
       bitSet(ledState, redBit);  // Purple (Red + Blue)
       bitSet(ledState, blueBit);
       break;
-    case 'w':
+    case 7:
       bitSet(ledState, redBit);  // White (Red + Green + Blue)
       bitSet(ledState, greenBit);
       bitSet(ledState, blueBit);
@@ -217,6 +220,11 @@ void setup() {
   pinMode(dataPin, OUTPUT);
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
+
+  // Initialize individualModules array with 1 by default
+  for (int i = 0; i < 4; i++) {
+    myData.individualModules[i] = true;
+  }
 }
 
 void loop() {
@@ -240,8 +248,37 @@ void loop() {
   for (int i = 0; i < 2; i++) {
     myData.master[i] = digitalRead(masterPins[i]) == LOW;  // LOW means pressed
   }
+  
+  // Handle individualModules logic
+  if (myData.buttons[7]) {  // If button 8 is pressed
+    bool moduleSelected = false;
+    for (int i = 0; i < 4; i++) {
+      if (myData.solenoids[i]) {  // If any of the first 4 solenoid buttons is pressed
+        selectedModule = i;  // Save the selected module index
+        moduleSelected = true;
+        break;  // Exit the loop once a button is found
+      }
+    }
 
-  writeLeDs(robotData.solenoidStatus, 'p','p','b', connected);
+    if (!moduleSelected) {
+      // If no solenoid button is pressed, reset selection
+      selectedModule = -1;
+    }
+  }
+
+  // Update individualModules array based on the selected module
+  if (selectedModule != -1) {
+    for (int i = 0; i < 4; i++) {
+      myData.individualModules[i] = (i == selectedModule);  // Set the selected module to 1 and others to 0
+    }
+  } else {
+    // Default state when no module is selected
+    for (int i = 0; i < 4; i++) {
+      myData.individualModules[i] = true;
+    }
+  }
+
+  writeLeDs(robotData.solenoidStatus, 5, selectedModule + 1, 2, connected);
 
   // Send data via ESP-NOW
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t*)&myData, sizeof(myData));

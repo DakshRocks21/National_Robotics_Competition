@@ -11,6 +11,7 @@ typedef struct struct_message {
   bool buttons[8];
   bool solenoids[6];
   bool master[2];
+  bool individualModules[4];
 } struct_message;
 
 struct_message incomingData;
@@ -60,6 +61,7 @@ void onDataRecv(const esp_now_recv_info * info, const uint8_t *controllerData, i
   int speedRightX = map(abs(incomingData.rightX-2047), 0, 2048, 0, max_Rot_speed);
   int speedRightY = map(abs(incomingData.rightY-2047), 0, 2048, 0, max_Rot_speed);
   int speedDiagonal = map(max(abs(incomingData.leftX-2047), abs(incomingData.leftY-2047)), -2047, 2048, 0, max_Dia_speed);
+
   Serial.println("Speeds:");
   Serial.println(speedLeftX);
   Serial.println(speedLeftY);
@@ -67,15 +69,49 @@ void onDataRecv(const esp_now_recv_info * info, const uint8_t *controllerData, i
   Serial.println(speedRightY);
   Serial.println(speedDiagonal);
 
-  // Process joystick inputs for movement
-  if(incomingData.rightX > 2000) {
-    my_robot.CenterPivotLeft(speedRightX);
-    Serial.println("Left Turn");
-  }
-  else if(incomingData.rightX < 1750) {
-    my_robot.CenterPivotRight(speedRightX);
-    Serial.println("Right Turn");
-  }
+  // INDIVIDUAL MODULES
+ if (incomingData.rightX > 2000) {
+    bool allModulesActive = true;
+    for (int i = 0; i < 4; i++) {
+        if (incomingData.individualModules[i] != 1) {
+            allModulesActive = false;
+            break;
+        }
+    }
+
+    if (allModulesActive) {
+        my_robot.CenterPivotLeft(speedRightX);
+        Serial.println("Left Turn");
+    } else {
+        for (int i = 0; i < 4; i++) {
+            if (incomingData.individualModules[i] == 1) {
+                my_robot.HingePivotAnticlockwise(speedRightX, i);
+                Serial.println("Left Turn");
+            }
+        }
+    }
+} else if (incomingData.rightX < 1750) {
+    bool allModulesActive = true;
+    for (int i = 0; i < 4; i++) {
+        if (incomingData.individualModules[i] != 1) {
+            allModulesActive = false;
+            break;
+        }
+    }
+
+    if (allModulesActive) {
+        my_robot.CenterPivotRight(speedRightX);
+        Serial.println("Right Turn");
+    } else {
+        for (int i = 0; i < 4; i++) {
+            if (incomingData.individualModules[i] == 1) {
+                my_robot.HingePivotClockwise(speedRightX, i);
+                Serial.println("Right Turn");
+            }
+        }
+    }
+}
+
   else if(incomingData.leftX > 2000 && incomingData.leftY > 2000) {
     my_robot.MoveDiagDownLeft(speedDiagonal);
     Serial.println("DownLeft");
