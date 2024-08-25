@@ -138,3 +138,56 @@ void loop() {
 //  my_robot.sm_reset_M4();
  
 }
+
+// hy psudo code cause he cant c++
+/*
+
+float walltrace(int front, int right, int back, int left, int huskylenseval){ // i cbb to add the rest of the yeah
+
+double kp speedL speedR speed treshold; // i forgot some stuff ltr yall declare
+
+  if (front = 1,right = 1); 
+
+  if (right = 1,back = 1);
+
+  if (back = 1,left = 1);
+
+  if (left = 1,front = 1){ //copy paste to the others
+    while (frontultrasonic > 5mm){ //while true might be better idk
+
+      walltracing(leftultrasonic);
+
+      run motor at speedL and speedR
+
+      if (left ultrasonic < 5mm && front ultrasonic < 5mm) || (left ultrasonic > 5mm && huskylenseval = 1) || (huskylenseval = 1 && front ultrasonic > 5mm){
+        return;
+        break;
+      }
+    }
+  }
+}
+
+int walltracing(ultrasonicoutput){
+treshold = 5
+kp = 1
+speed = 100
+  speedL = speed - kp * (ultrasonicoutput -  treshold); //should = 0 when 5mm away from wall
+  speedR = speed + kp * (ultrasonicoutput -  treshold);
+
+  return speedL, speedR;
+}
+
+void changeshape (char botshape){
+  yes idk get char input at if char = ... change shape to ...
+}
+
+void clearnroom(){
+
+}
+
+
+
+
+*/
+
+
