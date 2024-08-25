@@ -7,16 +7,20 @@
 Smorphi my_robot;
 HUSKYLENS huskylens;        // Create an object for HuskyLens
 
-SoftwareSerial myHuskySerial(26, 27); // RX is Pin 26, TX is Pin 27
+SoftwareSerial myHuskySerial(16, 17); // RX is Pin 26, TX is Pin 27
 
 void printResult(HUSKYLENSResult result); //Function for serial print results from the sensor
 
+struct UltrasonicSensors {
+  unsigned int module1[4];
+  unsigned int module2[4];
+  unsigned int module3[4];
+  unsigned int module4[4];
+};
 
-// Setting up variables and required flags
-int front_sensor_status ;
-int right_sensor_status ;
-int rear_sensor_status ;
-int left_sensor_status ;
+UltrasonicSensors ultrasonicData;
+
+void changeShape(int colourID, char currentShape);
 String last_action = "";
 bool I_shape_done = false;
 bool O_shape_done = false;
@@ -32,22 +36,72 @@ void setup() {
   Serial.println("workie?");
   Serial.begin(115200);
   my_robot.BeginSmorphi();
-  // myHuskySerial.begin(9600);         //Baud rate for HuskyLens communication. Can change from GUI of the HuskyLens
-  // while (!huskylens.begin(myHuskySerial)) //Establishing communication with HuskyLens
-  // {
-  //     Serial.println(F("Begin failed!"));
-  //     Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS (General Settings>>Protocol Type>>Serial 9600)"));
-  //     Serial.println(F("2.Please recheck the connection."));
-  //     delay(100);
-  // }
-
+  myHuskySerial.begin(9600);         //Baud rate for HuskyLens communication. Can change from GUI of the HuskyLens
+  while (!huskylens.begin(myHuskySerial)) //Establishing communication with HuskyLens
+  {
+      Serial.println(F("Begin failed!"));
+      Serial.println(F("1.Please recheck the \"Protocol Type\" in HUSKYLENS (General Settings>>Protocol Type>>Serial 9600)"));
+      Serial.println(F("2.Please recheck the connection."));
+      delay(100);
+  }
+  Serial.println("Success?");
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   Serial.println("workie?");
   my_robot.MoveForward(80);
-  //sensor_initialisation();
+  // sensor_initialisation();
+
+  if (!huskylens.request()) Serial.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
+  else if(!huskylens.isLearned()) Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
+  else if(!huskylens.available()) Serial.println(F("No block or arrow appears on the screen!"));
+  else{
+    Serial.println(F("###########"));
+    while (huskylens.available()){
+      HUSKYLENSResult result = huskylens.read();
+      Serial.print("Command: ");
+      Serial.println(result.command); 
+      Serial.print("ID:");
+      Serial.println(result.ID);
+      color_signature = result.ID;
+      command_block = result.command;
+      break
+    }
+  }
+}
+
+void changeShape(int colourID, char currentShape){
+  int wall = 0;
+  
+  if (currentShape == 'I'){
+    // Write code to check for left and right wall based on sensor info
+    // if (){
+    //   wall == 1;
+    // }
+  }
+  if (currentShape == "O"){
+    // Write code to check for left and right wall based on sensor info
+    // if (){
+    //   wall == 1;
+    // }
+  }
+  if (currentShape == "L"){
+    // Write code to check for left and right wall based on sensor info
+    // if (){
+    //   wall == 1;
+    // }
+  }
+  if (colourID == 1 && wall){
+    // change shape code
+  }
+  if (colourID == 2 && wall){
+    // change shape code
+  }
+  if (colourID == 3 && wall){
+    // change shape code
+  }
+}
 
 //     if (!huskylens.request()) Serial.println(F("Fail to request data from HUSKYLENS, recheck the connection!"));
 //   else if(!huskylens.isLearned()) Serial.println(F("Nothing learned, press learn button on HUSKYLENS to learn one!"));
@@ -138,6 +192,32 @@ void loop() {
 //  my_robot.sm_reset_M4();
  
 }
+
+
+
+
+
+
+
+// robotSides = [
+//   [0, 0, 0, 0], [0, 0, 0, 0]. [0, 0, 0, 0], [0, 0, 0, 0]
+// ]
+
+// sideO = [
+//   [1,2], // indexes of the sensors in robotSides 
+//   [0,2], // indexes of the sensors in robotSide
+//   [3], // indexes of the sensors in robotSide
+//   [1]// indexes of the sensors in robotSide
+// ]
+
+// sideI = ...
+
+
+// get sensor readings and store them in robotSides
+// based on the shape we use the sideX array to pull the data from robotSides
+
+
+
 
 // hy psudo code cause he cant c++
 /*
