@@ -191,12 +191,6 @@ void changeShape(int colourID, char currentShape){
 //  my_robot.sm_reset_M3();
 //  my_robot.sm_reset_M4();
  
-}
-
-
-
-
-
 
 
 // robotSides = [
@@ -262,10 +256,162 @@ void changeshape (char botshape){
 }
 
 void clearnroom(){
+  while true{
 
+    int i = 0 x = 0 y = 0;
+
+    while (i < 1){
+
+      while (rightultrasonic > 5mm){
+        move right or walltracing(rightultrasonic);
+      }
+      while (leftultrasonic > 5mm){
+        move left or walltracing(leftultrasonic);
+      }
+      i++;
+    }
+
+    
+    x = leftultrasonic;
+    y = rightultrasonic;
+
+    while (leftultrasonic > 5mm){
+      move left or walltracing(leftultrasonic);
+
+      if (leftultrasonic > x){
+        x = leftultrasonic;
+      }
+      if (frontultrasonic > y){
+        y = rightultrasonic;
+      }
+    }
+
+    move forward  set distance 
+
+
+    // rightwards missing wall
+
+    while (rightultrasonic > 5mm){
+      move right or walltracing(rightultrasonic);
+      if (leftultrasonic > x){
+        x = leftultrasonic;
+      }
+      if (rigjtultrasonic > y){
+        y = rightultrasonic;
+      }
+    }
+
+    move forward  set distance 
+
+    if (leftultrasonic < x +- 5mm) or smt{
+    missingx = x - leftultrasonic;
+    }
+
+    if (rightultrasonic <  x +- 5mm) or smt{
+    missingx = x - rightultrasonic;
+    }
+
+
+    if  (leftultrasonic > missingx, missingx != 0){
+      while (leftultrasonic > 5mm){
+        move left or walltracing(leftultrasonic);
+      }
+      while (backultrasonic > 5mm){
+        move back or walltracing(backultrasonic);
+      }
+      while (rightultrasonic < +-y){
+        while (rightultrasonic > 5mm){
+          move right or walltracing(rightultrasonic);
+          if (leftultrasonic > x){
+            x = leftultrasonic;
+          }
+          if (rigjtultrasonic > y){
+            y = rightultrasonic;
+          }
+        }
+
+        move forward  set distance
+
+      while (rightultrasonic > 5mm){
+        move right or walltracing(rightultrasonic);
+        if (leftultrasonic > x){
+          x = leftultrasonic;
+        }
+        if (rigjtultrasonic > y){
+          y = rightultrasonic;
+        }
+      }
+
+        if (frontultrasonic > 5mm){
+          move forward  set distance 
+        }      
+      }
+
+    }
+
+    if (rightultrasonic > missingx, missingx != 0){
+      while (rightultrasonic > 5mm){
+        move right or walltracing(rightultrasonic);
+      }
+      while (backultrasonic > 5mm){
+        move back or walltracing(backultrasonic);
+      }
+      while (leftultrasonic < +-y){
+        while (leftultrasonic > 5mm){
+          move left or walltracing(leftultrasonic);
+          if (leftultrasonic > x){
+            x = leftultrasonic;
+          }
+          if (rigjtultrasonic > y){
+            y = rightultrasonic;
+          }
+        }
+
+        move forward  set distance
+
+      while (leftultrasonic > 5mm){
+        move left or walltracing(leftultrasonic);
+        if (leftultrasonic > x){
+          x = leftultrasonic;
+        }
+        if (rigjtultrasonic > y){
+          y = rightultrasonic;
+        }
+      }
+
+        if (frontultrasonic > 5mm){
+          move forward  set distance 
+        }
+      }
+    }
+
+    if (missingx !=0, (leftultrasonic|| rightultrasonic) && frontultrasonic) <5mm{ //for partitions at the top
+      while(leftultrasonic > 5mm){
+        move left or walltracing(leftultrasonic);
+      }
+
+      while (leftultrasonic < 7mm){
+        move back;
+      }
+      move back abit of aditional amount
+      missingx = 0;
+    }
+
+
+    // implement the rest of the missing y
+    // to all movement, add if detect colour, store colour val
+
+
+    if (missingx = 0, (leftultrasonic|| rightultrasonic) && frontultrasonic) <5mm && colour = 1{ 
+      // hard code this???
+      changeshape('I');
+    }
+
+    
+  }
 }
 
-
+implement a fuction to detect colour at the start of the room, and call code sequence based on the colour detected(just incase kena reset)
 
 
 */

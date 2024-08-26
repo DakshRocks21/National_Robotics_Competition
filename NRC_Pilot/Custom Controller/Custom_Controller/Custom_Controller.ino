@@ -28,7 +28,6 @@ typedef struct struct_message {
   bool buttons[8];
   bool solenoids[6];
   bool master[2];
-  bool individualModules[4];
 } struct_message;
 
 struct_message myData;
@@ -45,9 +44,7 @@ struct_response robotData;
 // ROBOT MAC ADDRESS
 uint8_t broadcastAddress[] = { 0xec, 0x64, 0xc9, 0xa9, 0x08, 0x88 };
 
-int selectedModule = -1; // -1 indicates no module is selected
-
-void writeLeDs(char solenoids[6], char l1 = 1, char l2 = 1, char l3 = 1, char connected = 0) {
+void writeLeDs(char solenoids[6], char l1 = 'w', char l2 = 'w', char l3 = 'w', char connected = 0) {
   updateShiftRegister();
   int j = 0;
 
@@ -98,28 +95,28 @@ void updateShiftRegister() {
 // Function to set the color based on the character code
 void setColor(char color, int redBit, int blueBit, int greenBit) {
   switch (color) {
-    case 1:
+    case 'r':
       bitSet(ledState, redBit);  // Red on
       break;
-    case 2:
+    case 'g':
       bitSet(ledState, greenBit);  // Green on
       break;
-    case 3:
+    case 'b':
       bitSet(ledState, blueBit);  // Blue on
       break;
-    case 5:
+    case 'c':
       bitSet(ledState, greenBit);  // Cyan (Green + Blue)
       bitSet(ledState, blueBit);
       break;
-    case 4:
+    case 'y':
       bitSet(ledState, redBit);  // Yellow (Red + Green)
       bitSet(ledState, greenBit);
       break;
-    case 6:
+    case 'p':
       bitSet(ledState, redBit);  // Purple (Red + Blue)
       bitSet(ledState, blueBit);
       break;
-    case 7:
+    case 'w':
       bitSet(ledState, redBit);  // White (Red + Green + Blue)
       bitSet(ledState, greenBit);
       bitSet(ledState, blueBit);
@@ -220,11 +217,6 @@ void setup() {
   pinMode(dataPin, OUTPUT);
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
-
-  // Initialize individualModules array with 1 by default
-  for (int i = 0; i < 4; i++) {
-    myData.individualModules[i] = true;
-  }
 }
 
 void loop() {
