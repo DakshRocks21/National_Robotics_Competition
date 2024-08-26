@@ -231,7 +231,6 @@ void loop() {
     myData.buttons[i] = digitalRead(buttonPins[i]) == LOW;  // LOW means pressed
   }
 
-  // Read solenoid button states
   for (int i = 0; i < 6; i++) {
     myData.solenoids[i] = digitalRead(solenoidPins[i]) == LOW;  // LOW means pressed
   }
@@ -240,9 +239,49 @@ void loop() {
   for (int i = 0; i < 2; i++) {
     myData.master[i] = digitalRead(masterPins[i]) == LOW;  // LOW means pressed
   }
+  
+  // Handle individualModules logic
+  if (myData.buttons[7]) {  // If button 8 is pressed
+    bool moduleSelected = false;
+    for (int i = 0; i < 4; i++) {
+      if (myData.solenoids[i]) {  // If any of the first 4 solenoid buttons is pressed
+        selectedModule = i;  // Save the selected module index
+        moduleSelected = true;
+        break;  // Exit the loop once a button is found
+      }
+    }
 
-  writeLeDs(robotData.solenoidStatus, 'p','p','b', connected);
+    if (!moduleSelected) {
+      // If no solenoid button is pressed, reset selection
+      selectedModule = -1;
+    }
+  }
 
+  // Update individualModules array based on the selected module
+  if (selectedModule != -1) {
+    for (int i = 0; i < 4; i++) {
+      myData.individualModules[i] = (i == selectedModule);  // Set the selected module to 1 and others to 0
+      Serial.println(selectedModule);
+    }
+  } else {
+    // Default state when no module is selected
+    for (int i = 0; i < 4; i++) {
+      myData.individualModules[i] = true;
+    }
+  }
+
+  if (selectedModule != -1) {
+    writeLeDs(robotData.solenoidStatus, 5, selectedModule + 1, 2, connected);
+  }
+  else {
+     writeLeDs(robotData.solenoidStatus, 5, 7, 2, connected);
+  }
+
+  if (myData.buttons[7] == 1) {
+    for (int i = 0; i < 6; i++) {
+      myData.solenoids[i] = 0;
+    }
+  }
   // Send data via ESP-NOW
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t*)&myData, sizeof(myData));
 
