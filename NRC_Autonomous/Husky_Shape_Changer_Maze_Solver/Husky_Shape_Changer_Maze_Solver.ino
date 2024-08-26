@@ -73,33 +73,95 @@ void loop() {
 
 void changeShape(int colourID, char currentShape){
   int wall = 0;
+  unsigned int wall_distance; //TODO
   
   if (currentShape == 'I'){
     // Write code to check for left and right wall based on sensor info
-    // if (){
-    //   wall == 1;
-    // }
+    unsigned int sideSensors[] = {module1[3], module1[4]};  // TODO: Initialize the array with side sensors
+    for (unsigned int i = 0; i < sizeof(sideSensors)/sizeof(sideSensors[0]); i++) {
+      if (sideSensors[i] < wall_distance) {  // Check for side walls
+          wall = 1;  // Set wall to 1 near wall
+          break;  // Exit the loop once the condition is met
+      }
+    }
   }
+
   if (currentShape == "O"){
     // Write code to check for left and right wall based on sensor info
-    // if (){
-    //   wall == 1;
-    // }
+    unsigned int sideSensors[] = {module1[3], module1[4]};  // TODO: Initialize the array with side sensors
+    for (unsigned int i = 0; i < sizeof(sideSensors)/sizeof(sideSensors[0]); i++) {
+      if (sideSensors[i] < wall_distance) {  // Check for side walls
+          wall = 1;  // Set wall to 1 near wall
+          break;  // Exit the loop once the condition is met
+      }
+    }
   }
   if (currentShape == "L"){
     // Write code to check for left and right wall based on sensor info
-    // if (){
-    //   wall == 1;
-    // }
+    unsigned int sideSensors[] = {module1[3], module1[4]};  // TODO: Initialize the array with side sensors
+    for (unsigned int i = 0; i < sizeof(sideSensors)/sizeof(sideSensors[0]); i++) {
+      if (sideSensors[i] < wall_distance) {  // Check for side walls
+          wall = 1;  // Set wall to 1 near wall
+          break;  // Exit the loop once the condition is met
+      }
+    }
   }
   if (colourID == 1 && wall){
-    // change shape code
+    // TODO: change shape code 
   }
   if (colourID == 2 && wall){
-    // change shape code
+    // TODO: change shape code 
   }
   if (colourID == 3 && wall){
-    // change shape code
+    // TODO: change shape code 
+  }
+}
+
+void leftRightSweep(){
+  my_robot.O();
+  while (1){
+    if (module1[0] > wall_distance && module1[1] > wall_distance){ // Can move forward
+      unsigned int sideSensors[] = {module1[3], module1[4]};  // Initialize the array with side sensors
+      for (unsigned int i = 0; i < sizeof(sideSensors)/sizeof(sideSensors[0]); i++) {
+        if (sideSensors[i] < wall_distance) {  // Check for side walls
+            wall = 1;  // Set wall to 1 near wall
+            break;  // Exit the loop once the condition is met
+        }
+      }
+      while (!wall){
+        my_robot.MoveLeft();
+        // Get horizontal distance and store it
+      }
+      my_robot.MoveForward(); // TODO: By robot height
+      changeShape();
+      my_robot.MoveRight(); 
+      my_robot.MoveForward(); // TODO: By robot height
+    }
+    if (module1[0] > wall_distance || module1[1] > wall_distance){
+      unsigned int sideSensors[] = {module1[3], module1[4]};  // Initialize the array with side sensors
+      for (unsigned int i = 0; i < sizeof(sideSensors)/sizeof(sideSensors[0]); i++) {
+        if (sideSensors[i] < wall_distance) {  // Check for side walls
+            wall = 1;  // Set wall to 1 near wall
+            break;  // Exit the loop once the condition is met
+        }
+      }
+      while (!wall){
+        my_robot.MoveLeft();
+        // Get horizontal distance and store it
+      }
+      if (module1[0] > module1[1]){
+        my_robot.MoveDiagUpLeft() // TODO: By robot height
+        changeShape();
+        my_robot.MoveRight(); 
+        my_robot.MoveForward(); // TODO: By robot height
+      }
+      if (module1[0] < module1[1]){
+        my_robot.MoveDiagUpRight() // TODO: By robot height
+        changeShape();
+        my_robot.MoveRight(); 
+        my_robot.MoveForward(); // TODO: By robot height
+      }
+    }
   }
 }
 
