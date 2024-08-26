@@ -206,14 +206,6 @@ void onDataRecv(const esp_now_recv_info * info, const uint8_t *controllerData, i
     my_robot.I();
     Serial.println("Shape I transform");
   }
-  if(incomingData.buttons[7]) {
-    my_robot.sm_reset_M1();
-    my_robot.sm_reset_M2();
-    my_robot.sm_reset_M3();
-    my_robot.sm_reset_M4();
-    my_robot.CenterPivotLeft(50);
-    Serial.println("Left Turn");
-  }
 
   // Process solenoid button inputs
   for (int i = 0; i < 6; i++) {
