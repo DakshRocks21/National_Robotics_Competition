@@ -229,7 +229,7 @@ Smorphi my_robot;
 
 // Maximum movement speeds
 const int max_WASD_speed = 100;
-const int  max_Rot_speed = 180;
+const int  max_Rot_speed = 270;
 const int  max_Dia_speed = 100;
 const int joy_high_limit = 2100;
 const int joy_low_limit = 1650;
